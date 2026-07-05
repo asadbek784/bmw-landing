@@ -20,6 +20,7 @@ function Scene({ onLoadingComplete }: SceneProps) {
   const groupRef = useRef<Group>(null);
   const cameraRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { camera } = useThree();
   const autoRotateRef = useRef(true);
 
@@ -120,11 +121,32 @@ function Scene({ onLoadingComplete }: SceneProps) {
     onLoadingComplete?.();
   }, [onLoadingComplete]);
 
+  const handleModelError = useCallback((errorMsg: string) => {
+    setError(errorMsg);
+    setIsLoading(false);
+    onLoadingComplete?.();
+  }, [onLoadingComplete]);
+
+  if (error) {
+    return (
+      <>
+        <PerspectiveCamera makeDefault position={[0, 0.5, 3.5]} fov={50} />
+        <group ref={groupRef}>
+          <mesh position={[0, 0.5, 0]}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color="#e74c3c" />
+          </mesh>
+        </group>
+        <ambientLight intensity={0.8} />
+      </>
+    );
+  }
+
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0.5, 3.5]} fov={50} />
       <group ref={groupRef}>
-        <CarModel isLoading={isLoading} onLoaded={handleModelLoaded} />
+        <CarModel isLoading={isLoading} onLoaded={handleModelLoaded} onError={handleModelError} />
       </group>
 
       {/* Lighting */}
@@ -150,18 +172,17 @@ function Scene({ onLoadingComplete }: SceneProps) {
 
 // Wrapper component for the canvas
 function CarSceneComponent({ onLoadingComplete }: SceneProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
-      <Canvas
-        shadows
-        dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1}
-        gl={{ antialias: true, alpha: true }}
-      >
-        <Scene onLoadingComplete={onLoadingComplete} />
-      </Canvas>
-    </div>
+    <Canvas
+      shadows
+      style={{ width: '100%', height: '100%' }}
+      dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1}
+      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+    >
+      <Scene onLoadingComplete={onLoadingComplete} />
+    </Canvas>
   );
 }
 

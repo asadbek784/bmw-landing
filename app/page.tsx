@@ -1,12 +1,17 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import HeroSection from '@/components/HeroSection';
 import FeatureSection from '@/components/FeatureSection';
 import DetailSection from '@/components/DetailSection';
 import CTASection from '@/components/CTASection';
 import LoadingIndicator from '@/components/LoadingIndicator';
-import CarScene from '@/components/CarScene';
+import CanvasErrorBoundary from '@/components/CanvasErrorBoundary';
+
+const CarScene = dynamic(() => import('@/components/CarScene'), {
+  ssr: false,
+});
 
 export default function Page() {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -30,15 +35,15 @@ export default function Page() {
       {/* Loading Indicator */}
       <LoadingIndicator visible={isLoading} />
 
-      {/* Fixed 3D Scene Background - positioned absolutely to fill viewport */}
-      <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none overflow-hidden bg-gradient-to-b from-slate-100 to-slate-50">
-        <div ref={canvasContainerRef} className="absolute inset-0 w-full h-full">
+      {/* Fixed 3D Scene Background */}
+      <div className="fixed top-0 left-0 w-screen h-screen z-0 overflow-hidden bg-gradient-to-b from-slate-100 to-slate-50">
+        <CanvasErrorBoundary>
           <CarScene onLoadingComplete={handleSceneReady} />
-        </div>
+        </CanvasErrorBoundary>
       </div>
 
       {/* Content Sections - stacked on top of canvas */}
-      <div className="relative z-10">
+      <div className="relative z-10" style={{ position: 'relative', pointerEvents: 'auto' }}>
         {/* Hero Section */}
         <HeroSection>
           {/* 3D Canvas fills background */}

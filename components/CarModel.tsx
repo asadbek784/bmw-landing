@@ -7,6 +7,7 @@ import { Group, Mesh } from 'three';
 interface CarModelProps {
   isLoading?: boolean;
   onLoaded?: () => void;
+  onError?: (error: string) => void;
 }
 
 // Low-poly car model built from primitives
@@ -14,6 +15,12 @@ interface CarModelProps {
 export function CarModelPlaceholder() {
   return (
     <group>
+      {/* Simple test cube */}
+      <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#1e3a8a" roughness={0.4} metalness={0.7} />
+      </mesh>
+
       {/* Car body - main chassis */}
       <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.8, 0.5, 2]} />
@@ -99,8 +106,7 @@ export function CarModelExternalLoader({ modelUrl = '/models/car.glb' }: { model
   }
 }
 
-export default function CarModel({ isLoading = false, onLoaded }: CarModelProps) {
-  // Using placeholder for now - swap with CarModelExternalLoader when a real model is available
+export default function CarModel({ isLoading = false, onLoaded, onError }: CarModelProps) {
   useEffect(() => {
     if (!isLoading && onLoaded) {
       onLoaded();
