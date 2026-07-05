@@ -3,9 +3,13 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Precision Engineered - Modern 3D Automotive Experience',
+  description: 'Experience the future of automotive excellence. Scroll through an immersive 3D showcase of premium engineering and aerodynamic design.',
   generator: 'v0.app',
+  openGraph: {
+    title: 'Precision Engineered - Modern 3D Automotive Experience',
+    description: 'Experience the future of automotive excellence with scroll-driven 3D animations.',
+  },
   icons: {
     icon: [
       {
@@ -39,8 +43,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="en" className="scroll-smooth">
+      <body className="antialiased bg-white text-gray-900">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

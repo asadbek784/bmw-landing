@@ -1,23 +1,58 @@
+'use client';
+
+import { useRef, useState, useEffect } from 'react';
+import HeroSection from '@/components/HeroSection';
+import FeatureSection from '@/components/FeatureSection';
+import DetailSection from '@/components/DetailSection';
+import CTASection from '@/components/CTASection';
+import LoadingIndicator from '@/components/LoadingIndicator';
+import CarScene from '@/components/CarScene';
+
 export default function Page() {
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Auto-hide loading indicator after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleSceneReady = () => {
+    setIsLoading(false);
+  };
+
   return (
-    <main className="relative flex min-h-screen items-center justify-center bg-[color:light-dark(#fff,#000)] text-[color:light-dark(#000,#fff)]">
-      <svg
-        aria-hidden="true"
-        className="size-20"
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p className="absolute left-1/2 top-[calc(50%+56px)] -translate-x-1/2 whitespace-nowrap text-sm font-medium text-muted-foreground">
-        Your v0 generation will show here.
-      </p>
+    <main className="relative w-full bg-white overflow-x-hidden">
+      {/* Loading Indicator */}
+      <LoadingIndicator visible={isLoading} />
+
+      {/* Fixed 3D Scene Background - positioned absolutely to fill viewport */}
+      <div className="fixed top-0 left-0 w-full h-screen z-0 pointer-events-none overflow-hidden bg-gradient-to-b from-slate-100 to-slate-50">
+        <div ref={canvasContainerRef} className="absolute inset-0 w-full h-full">
+          <CarScene onLoadingComplete={handleSceneReady} />
+        </div>
+      </div>
+
+      {/* Content Sections - stacked on top of canvas */}
+      <div className="relative z-10">
+        {/* Hero Section */}
+        <HeroSection>
+          {/* 3D Canvas fills background */}
+        </HeroSection>
+
+        {/* Feature Section */}
+        <FeatureSection />
+
+        {/* Detail Section */}
+        <DetailSection />
+
+        {/* CTA Section */}
+        <CTASection />
+      </div>
     </main>
-  )
+  );
 }

@@ -161,3 +161,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom animations for the landing page */
+@layer utilities {
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom animation for scroll indicator */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Ensure 3D perspective */
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
